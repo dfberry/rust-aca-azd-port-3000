@@ -1,10 +1,10 @@
 name: build-and-deploy
 
 env:
-  AZURE_CONTAINER_APP_NAME: rust-hello
-  AZURE_GROUP_NAME: rust-axum-server
-  AZURE_CONTAINER_REGISTRY: dfberryregistry
-  IMAGE: rust-hello-world-server
+  AZURE_CONTAINER_APP_NAME: rustserver-aca-azd-port-3000
+  AZURE_GROUP_NAME: rg-rustserver
+  AZURE_CONTAINER_REGISTRY: crmjmfhdhubp3de
+  IMAGE: rust-server-hello-world
 
 on:
   # Automatically trigger it when detected changes in repo. Remove comments to enable
@@ -56,10 +56,6 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Extract repository name
-        id: extract_repo
-        run: echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
       - name: Deploy to containerapp
         uses: azure/cli@v2
