@@ -9,9 +9,9 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param nodejsAcaAzdPort3000Exists bool
+param rustserverAcaAzdPort3000Exists bool
 @secure()
-param nodejsAcaAzdPort3000Definition object
+param rustserverAcaAzdPort3000Definition object
 
 @description('Id of the user or app to assign application roles')
 param principalId string
@@ -89,18 +89,18 @@ module appsEnv './shared/apps-env.bicep' = {
   scope: rg
 }
 
-module nodejsAcaAzdPort3000 './app/nodejs-aca-azd-port-3000.bicep' = {
-  name: 'nodejs-aca-azd-port-3000'
+module rustserverAcaAzdPort3000 './app/rustserver-aca-azd-port-3000.bicep' = {
+  name: 'rustserver-aca-azd-port-3000'
   params: {
-    name: 'nodejs-aca-azd-port-3000'
+    name: 'rustserver-aca-azd-port-3000'
     location: location
     tags: tags
-    identityName: '${abbrs.managedIdentityUserAssignedIdentities}nodejs-aca-azd-port-3000-${resourceToken}'
+    identityName: '${abbrs.managedIdentityUserAssignedIdentities}rustserver-aca-azd-port-3000-${resourceToken}'
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     containerAppsEnvironmentName: appsEnv.outputs.name
     containerRegistryName: registry.outputs.name
-    exists: nodejsAcaAzdPort3000Exists
-    appDefinition: nodejsAcaAzdPort3000Definition
+    exists: rustserverAcaAzdPort3000Exists
+    appDefinition: rustserverAcaAzdPort3000Definition
   }
   scope: rg
 }

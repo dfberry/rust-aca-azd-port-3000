@@ -1,0 +1,13 @@
+[package]
+name = "rust-aca-azd-port-3000"
+version = "1.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+axum = { version = "0.7.5" }
+tokio = { version = "1.39.3", features = ["full"] }
+
+[[bin]]
+name = "server"
+path = "src/main.rs"

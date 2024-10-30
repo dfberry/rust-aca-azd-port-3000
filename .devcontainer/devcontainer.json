@@ -1,14 +1,37 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+// README at: https://github.com/devcontainers/templates/tree/main/src/rust
 {
-	"name": "Node.js & TypeScript",
+	"name": "Rust",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm",
+	"image": "mcr.microsoft.com/devcontainers/rust:1-1-bullseye",
 	"features": {
+		"ghcr.io/devcontainers/features/rust:1": {},
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/azure/azure-dev/azd:0": {},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"1YiB.rust-bundle",
+				"humao.rest-client",
+				"mhutchie.git-graph",
+				"eamodio.gitlens",
+				"GitHub.vscode-pull-request-github",
+				"OmarTawfik.github-actions-vscode"
+			]
+		}
 	}
+
+	// Use 'mounts' to make the cargo cache persistent in a Docker Volume.
+	// "mounts": [
+	// 	{
+	// 		"source": "devcontainer-cargo-cache-${devcontainerId}",
+	// 		"target": "/usr/local/cargo",
+	// 		"type": "volume"
+	// 	}
+	// ]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -17,7 +40,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "yarn install",
+	//"postCreateCommand": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash"
 
 	// Configure tool-specific properties.
 	// "customizations": {},

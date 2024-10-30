@@ -60,7 +60,7 @@ module fetchLatestImage '../modules/fetch-container-image.bicep' = {
 resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
   name: name
   location: location
-  tags: union(tags, {'azd-service-name':  'nodejs-aca-azd-port-3000' })
+  tags: union(tags, {'azd-service-name':  'rustserver-aca-azd-port-3000' })
   dependsOn: [ acrPullRole ]
   identity: {
     type: 'UserAssigned'

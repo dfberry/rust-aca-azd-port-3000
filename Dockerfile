@@ -1,21 +1,31 @@
-# Use the official Node.js image as the base image
-FROM node:18
+FROM rust as builder
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+RUN apt update && apt install -y libpq-dev
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+#https://www.reddit.com/r/rust/comments/1f0ibyq/rust_diesel_postgres_container/
+#RUN cargo install diesel_cli --no-default-features --features postgres
 
-# Install the dependencies
-RUN npm install
+WORKDIR /app
 
-# Copy the rest of the application code to the working directory
 COPY . .
+RUN ls -la
+
+RUN cargo build --release
+#---------------------------------------------
+FROM rust as server
+
+RUN apt update && apt install -y libpq-dev
+
+WORKDIR /app
+
+# Copy the built application from the first stage
+COPY --from=builder /app/target/release/server /app/server
+COPY --from=builder /app/Cargo.toml /app/Cargo.toml
+
+RUN ls -la
 
 EXPOSE 3000
 
 ENV PORT 3000
 
-# Define the command to run the application
-CMD ["node", "index.js"]
+CMD ["/app/server"]

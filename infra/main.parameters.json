@@ -8,10 +8,10 @@
       "location": {
         "value": "${AZURE_LOCATION}"
       },
-      "nodejsAcaAzdPort3000Exists": {
-        "value": "${SERVICE_NODEJS_ACA_AZD_PORT_3000_RESOURCE_EXISTS=false}"
+      "rustserverAcaAzdPort3000Exists": {
+        "value": "${SERVICE_rustserver_ACA_AZD_PORT_3000_RESOURCE_EXISTS=false}"
       },
-      "nodejsAcaAzdPort3000Definition": {
+      "rustserverAcaAzdPort3000Definition": {
         "value": {
           "settings": [
             {
