@@ -1,10 +1,10 @@
 name: build-and-deploy
 
 env:
-  AZURE_CONTAINER_APP_NAME: rustserver-aca-azd-port-3000
-  AZURE_RESOURCE_GROUP_NAME: rg-rustserver
-  AZURE_CONTAINER_REGISTRY: crmjmfhdhubp3de
-  IMAGE: rust-server-hello-world
+  AZURE_CONTAINER_APP_NAME: 
+  AZURE_RESOURCE_GROUP_NAME: 
+  AZURE_CONTAINER_REGISTRY: 
+  IMAGE: 
 
 on:
   # Automatically trigger it when detected changes in repo. Remove comments to enable
@@ -24,6 +24,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # - name: Check for empty environment variables
+      #   run: |
+      #     if [ -z "${{ env.AZURE_CONTAINER_APP_NAME }}" ] || [ -z "${{ env.AZURE_RESOURCE_GROUP_NAME }}" ] || [ -z "${{ env.AZURE_CONTAINER_REGISTRY }}" ] || [ -z "${{ env.IMAGE }}" ]; then
+      #       echo "One or more required environment variables are empty. Exiting."
+      #       exit 1
+      #     fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
