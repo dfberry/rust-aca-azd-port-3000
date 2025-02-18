@@ -4,6 +4,7 @@
 
 Follow the steps in the next section. If you can't complete all the steps successfully, log an issue with the following:
 
+* You should only need to copy `sample.env` files into `.env` files. 
 * What host operating system did you use such as Windows, Mac, or Linux. Include version and flavor -- as much information as possible.
 * What type of Azure subscription you are deploying to. 
 * Which step didn't complete and what error you got in the process.
@@ -13,23 +14,39 @@ Follow the steps in the next section. If you can't complete all the steps succes
   * ./infra
   * ./devcontainer
   * ./github/workflows
+  * ./http
 
 ## azd up
 
-1. Have .env file with port and PG_DATABASE_URL
-2. Run `azd login`
-3. Run `bash ./scripts/azd-up-with-environment.sh`
-4. Run `bash ./scripts/create-github-azure-credentials.sh` and put value in GitHub repo secret as AZURE_CREDENTIALS
-5. Create 3 more secrets for: 
-    - AZURE_CONTAINER_REGISTRY_LOGIN_SERVER
-    - AZURE_CONTAINER_REGISTRY_USERNAME
-    - AZURE_CONTAINER_REGISTRY_PASSWORD
-6. Create github workflow for deployment. Set the following variables at the top:
+1. Copy `sample.env` to `.env` file. Fill out with port and secret. Secret is just an example of any secret.
+1. In terminal at root of project, run `azd login` to sign into Azure.
+1. In terminal at root of project, run `gh auth login` to sign into GitHub.
+1. In terminal at root of project, run `bash ./scripts/azd-provision-with-environment.sh`. This creates the Azure resources and copies a few key environment variables into the root `.env`. 
+1. In terminal at root of project, run `bash ./scripts/create-github-azure-credentials.sh`. This creates the secrets you need and addes them to your repo. 
+1. Copy `./.azure/build-and-deploy-template.yaml` to `./.azure/workflows/build-and-deploy.yaml`. 
+1. Go to the GitHub repository and trigger the workflow manually to deploy to Azure Container Apps.
 
-    ```yaml
-    env:
-        AZURE_CONTAINER_APP_NAME: rustserver
-        AZURE_RESOURCE_GROUP: rg-dfb-api-pg-stage
-        AZURE_CONTAINER_REGISTRY: cr7yqxmkwjz6ay2
-        IMAGE_NAME: api-pg-rust
-    ```
+
+## Using VS Code REST Client
+
+For testing your HTTP endpoints, it's recommended to use the [REST Client extension for VS Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client). The repository contains an [http](http://_vscodecontentref_/1) folder which includes sample HTTP request files (e.g., `sample.http`). You can use these files to easily send requests directly from VS Code.
+
+Additionally, create your local [.env](http://_vscodecontentref_/2) file based on the [sample.env](http://_vscodecontentref_/3) provided in the [http](http://_vscodecontentref_/4) folder. This file stores your environment variables needed for testing. Simply copy or rename [sample.env](http://_vscodecontentref_/5) to [.env](http://_vscodecontentref_/6) and adjust values as necessary.
+
+## Alternative Rust Backend API Servers
+
+If you'd like to explore different Rust web frameworks for your backend API server, consider trying out these sample repositories:
+
+- **Actix-Web**: Check out the [Actix Web Examples](https://github.com/actix/examples) for various application samples.
+- **Rocket**: Explore the [Rocket Examples](https://github.com/SergioBenitez/Rocket/tree/v0.5-rc/examples) to see how Rocket can be used for backend development.
+- **Warp**: Review the [Warp Examples](https://github.com/seanmonstar/warp/tree/master/examples) for a lightweight, composable alternative.
+
+Feel free to swap out the current implementation with any of these frameworks to better suit your project's needs.
+
+## Remove resources
+
+When you are ready to remove your resources from Azure, use the following Azure Developer CLI command:
+
+```bash
+azd down --purge
+```

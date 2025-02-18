@@ -1,19 +1,10 @@
 name: build-and-deploy
 
-env:
-  AZURE_CONTAINER_APP_NAME: 
-  AZURE_RESOURCE_GROUP_NAME: 
-  AZURE_CONTAINER_REGISTRY: 
-  IMAGE: 
-
 on:
-  # Automatically trigger it when detected changes in repo. Remove comments to enable
-  #push:
-  #  branches: 
-  #    [ main ]
-
-  # Allow mannually trigger 
   workflow_dispatch:   
+  push:
+   branches: 
+     [ main ]  
 
 permissions:
   id-token: write

@@ -11,18 +11,18 @@
       "rustserverAcaAzdPort3000Exists": {
         "value": "${SERVICE_rustserver_ACA_AZD_PORT_3000_RESOURCE_EXISTS=false}"
       },
-      "rustserverAcaAzdPort3000Definition": {
+      "rust_server_env_vars": {
         "value": {
           "settings": [
             {
-              "name": "",
-              "value": "${VAR}",
+              "name": "PORT",
+              "value": "${PORT}",
               "_comment_name": "The name of the environment variable when running in Azure. If empty, ignored.",
               "_comment_value": "The value to provide. This can be a fixed literal, or an expression like ${VAR} to use the value of 'VAR' from the current environment."
             },
             {
-              "name": "",
-              "value": "${VAR_S}",
+              "name": "MY_SECRET",
+              "value": "${MY_SECRET}",
               "secret": true,
               "_comment_name": "The name of the environment variable when running in Azure. If empty, ignored.",
               "_comment_value": "The value to provide. This can be a fixed literal, or an expression like ${VAR_S} to use the value of 'VAR_S' from the current environment."
