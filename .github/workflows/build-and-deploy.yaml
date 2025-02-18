@@ -18,7 +18,7 @@ jobs:
 
       # - name: Check for empty environment variables
       #   run: |
-      #     if [ -z "${{ env.AZURE_CONTAINER_APP_NAME }}" ] || [ -z "${{ env.AZURE_RESOURCE_GROUP_NAME }}" ] || [ -z "${{ env.AZURE_CONTAINER_REGISTRY }}" ] || [ -z "${{ env.IMAGE }}" ]; then
+      #     if [ -z "${{ secrets.AZURE_CONTAINER_APP_NAME }}" ] || [ -z "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" ] || [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY }}" ] || [ -z "${{ secrets.IMAGE_NAME }}" ]; then
       #       echo "One or more required environment variables are empty. Exiting."
       #       exit 1
       #     fi
@@ -42,7 +42,7 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }}
+            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
           file: ./Dockerfile
 
   deploy:
@@ -60,5 +60,5 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp registry set -n ${{ env.AZURE_CONTAINER_APP_NAME }} -g ${{ env.AZURE_RESOURCE_GROUP_NAME }} --server ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
-            az containerapp update -n ${{ env.AZURE_CONTAINER_APP_NAME }} -g ${{ env.AZURE_RESOURCE_GROUP_NAME }} --image ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }}
+            az containerapp registry set -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --server ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
+            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
