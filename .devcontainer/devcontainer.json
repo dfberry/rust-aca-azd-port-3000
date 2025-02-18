@@ -19,10 +19,11 @@
 				"mhutchie.git-graph",
 				"eamodio.gitlens",
 				"GitHub.vscode-pull-request-github",
-				"OmarTawfik.github-actions-vscode"
+				"OmarTawfik.github-actions-vscode",
+				"ms-azuretools.vscode-bicep",
 			]
 		}
-	}
+	},
 
 	// Use 'mounts' to make the cargo cache persistent in a Docker Volume.
 	// "mounts": [
@@ -37,14 +38,14 @@
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [3000],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	//"postCreateCommand": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash"
+	"postCreateCommand": "curl -fsSL https://aka.ms/install-azd.sh | bash",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }
