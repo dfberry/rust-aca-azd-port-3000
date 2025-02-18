@@ -23,33 +23,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Verify required secrets are set
-        run: |
-          missing=0
+    - name: Verify required secrets are set
+      run: |
+        missing=0
 
-          # Function to check if a variable is empty or equals its own name.
-          check_var() {
-            var_value="$1"
-            var_name="$2"
-            if [ -z "$var_value" ] || [ "$var_value" = "$var_name" ]; then
-              echo "Error: Missing or invalid value for $var_name"
-              missing=1
-            else
-              echo "$var_name is set with length: ${#var_value}"
-            fi
-          }
-
-          check_var "$AZURE_CONTAINER_APP_NAME" "AZURE_CONTAINER_APP_NAME"
-          check_var "$AZURE_RESOURCE_GROUP_NAME" "AZURE_RESOURCE_GROUP_NAME"
-          check_var "$AZURE_CONTAINER_REGISTRY_LOGIN_SERVER" "AZURE_CONTAINER_REGISTRY_LOGIN_SERVER"
-          check_var "$AZURE_CONTAINER_REGISTRY_USERNAME" "AZURE_CONTAINER_REGISTRY_USERNAME"
-          check_var "$AZURE_CONTAINER_REGISTRY_PASSWORD" "AZURE_CONTAINER_REGISTRY_PASSWORD"
-          check_var "$IMAGE_NAME" "IMAGE_NAME"
-
-          if [ $missing -ne 0 ]; then
-            echo "One or more required secrets are missing or invalid. Exiting."
-            exit 1
+        # Function to check if a variable is empty or equals its own name.
+        check_var() {
+          var_value="$1"
+          var_name="$2"
+          if [ -z "$var_value" ] || [ "$var_value" = "$var_name" ]; then
+            echo "Error: Missing or invalid value for $var_name"
+            missing=1
+          else
+            echo "$var_name is set with length: ${#var_value}"
           fi
+        }
+
+        check_var "$AZURE_CONTAINER_APP_NAME" "AZURE_CONTAINER_APP_NAME"
+        check_var "$AZURE_RESOURCE_GROUP_NAME" "AZURE_RESOURCE_GROUP_NAME"
+        check_var "$AZURE_CONTAINER_REGISTRY_LOGIN_SERVER" "AZURE_CONTAINER_REGISTRY_LOGIN_SERVER"
+        check_var "$AZURE_CONTAINER_REGISTRY_USERNAME" "AZURE_CONTAINER_REGISTRY_USERNAME"
+        check_var "$AZURE_CONTAINER_REGISTRY_PASSWORD" "AZURE_CONTAINER_REGISTRY_PASSWORD"
+        check_var "$IMAGE_NAME" "IMAGE_NAME"
+
+        if [ $missing -ne 0 ]; then
+          echo "One or more required secrets are missing or invalid. Exiting."
+          exit 1
+        fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
