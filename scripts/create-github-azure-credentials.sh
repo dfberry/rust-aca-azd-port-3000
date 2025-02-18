@@ -78,6 +78,6 @@ gh secret set AZURE_CONTAINER_REGISTRY_NAME_PASSWORD -b"$acr_password"
 gh secret set AZURE_CONTAINER_APP_NAME -b"$AZURE_CONTAINER_APP_NAME"
 gh secret set AZURE_RESOURCE_GROUP_NAME -b"$AZURE_RESOURCE_GROUP_NAME"
 gh secret set AZURE_CONTAINER_REGISTRY_NAME -b"$AZURE_CONTAINER_REGISTRY_NAME"
-gh secret set IMAGE_NAME -b"$AZURE_CONTAINER_APP_NAME"
+gh secret set IMAGE_NAME -b"rust-server"
 
 echo "Secrets have been set successfully."
