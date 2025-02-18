@@ -23,6 +23,20 @@ jobs:
       #       exit 1
       #     fi
 
+      - name: Verify required secrets are set
+        run: |
+          missing=0
+          if [ -z "${{ secrets.AZURE_CONTAINER_APP_NAME }}" ]; then echo "Error: Missing AZURE_CONTAINER_APP_NAME" && missing=1; fi
+          if [ -z "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" ]; then echo "Error: Missing AZURE_RESOURCE_GROUP_NAME" && missing=1; fi
+          if [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}" ]; then echo "Error: Missing AZURE_CONTAINER_REGISTRY_LOGIN_SERVER" && missing=1; fi
+          if [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}" ]; then echo "Error: Missing AZURE_CONTAINER_REGISTRY_USERNAME" && missing=1; fi
+          if [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}" ]; then echo "Error: Missing AZURE_CONTAINER_REGISTRY_PASSWORD" && missing=1; fi
+          if [ -z "${{ secrets.IMAGE_NAME }}" ]; then echo "Error: Missing IMAGE_NAME" && missing=1; fi
+          if [ $missing -ne 0 ]; then
+            echo "One or more required secrets are missing. Exiting."
+            exit 1
+          fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

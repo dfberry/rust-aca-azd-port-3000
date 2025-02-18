@@ -40,35 +40,66 @@ sp_output=$(az ad sp create-for-rbac \
   --scopes "/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/$AZURE_RESOURCE_GROUP_NAME" \
   --output json)
 
+# Assign final_output from sp_output. Adjust the jq filter as needed.
+final_output=$(echo "$sp_output" | jq --arg subId "$AZURE_SUBSCRIPTION_ID" '{
+  clientSecret: .password,
+  subscriptionId: $subId,
+  tenantId: .tenant,
+  clientId: .appId
+}')
+
 # Retrieve the Azure Container Registry login URL.
 acr_login=$(az acr show --name "$AZURE_CONTAINER_REGISTRY_NAME" --query "loginServer" --output tsv)
+echo "ACR Login URL: $acr_login"
 
 # Retrieve the ACR credentials (username and password).
 acr_creds=$(az acr credential show --name "$AZURE_CONTAINER_REGISTRY_NAME" --output json)
 acr_username=$(echo "$acr_creds" | jq -r '.username')
 acr_password=$(echo "$acr_creds" | jq -r '.passwords[0].value')
 
-# Compose the final JSON output with the required keys.
-final_output=$(echo "$sp_output" | jq --arg subId "$AZURE_SUBSCRIPTION_ID" \
-                                        --arg acrLogin "$acr_login" \
-                                        --arg acrUsername "$acr_username" \
-                                        --arg acrPassword "$acr_password" '{
-  clientSecret: .password,
-  subscriptionId: $subId,
-  tenantId: .tenant,
-  clientId: .appId,
-  acrLoginUrl: $acrLogin,
-  acrUsername: $acrUsername,
-  acrPassword: $acrPassword
-}')
+# Verify that none of the required values are empty.
+if [ -z "$final_output" ]; then
+  echo "Error: final_output is empty. Cannot proceed."
+  exit 1
+fi
+if [ -z "$acr_login" ]; then
+  echo "Error: ACR login URL is empty. Check AZURE_CONTAINER_REGISTRY_NAME."
+  exit 1
+fi
+if [ -z "$acr_username" ]; then
+  echo "Error: ACR username is empty."
+  exit 1
+fi
+if [ -z "$acr_password" ]; then
+  echo "Error: ACR password is empty."
+  exit 1
+fi
+if [ -z "$AZURE_CONTAINER_APP_NAME" ]; then
+  echo "Error: AZURE_CONTAINER_APP_NAME is empty."
+  exit 1
+fi
+if [ -z "$AZURE_RESOURCE_GROUP_NAME" ]; then
+  echo "Error: AZURE_RESOURCE_GROUP_NAME is empty."
+  exit 1
+fi
+if [ -z "$AZURE_CONTAINER_REGISTRY_NAME" ]; then
+  echo "Error: AZURE_CONTAINER_REGISTRY_NAME is empty."
+  exit 1
+fi
 
-echo "$final_output"
-
-echo "IMPORTANT: Store the following as individual GitHub repo secrets:"
-echo "- AZURE_CREDENTIALS (contains clientSecret, subscriptionId, tenantId, clientId)"
-echo "- AZURE_CONTAINER_REGISTRY_NAME_LOGIN_SERVER"
-echo "- AZURE_CONTAINER_REGISTRY_NAME_USERNAME"
-echo "- AZURE_CONTAINER_REGISTRY_NAME_PASSWORD"
+# WARNING: The following prints include sensitive credentials.
+# Do NOT leave this in production environments.
+echo "-------------------------"
+echo "Printing secrets for debugging:"
+echo "AZURE_CREDENTIALS: $final_output"
+echo "ACR Login URL: $acr_login"
+echo "ACR Username: $acr_username"
+echo "ACR Password: $acr_password"
+echo "AZURE_CONTAINER_APP_NAME: $AZURE_CONTAINER_APP_NAME"
+echo "AZURE_RESOURCE_GROUP_NAME: $AZURE_RESOURCE_GROUP_NAME"
+echo "AZURE_CONTAINER_REGISTRY_NAME: $AZURE_CONTAINER_REGISTRY_NAME"
+echo "IMAGE_NAME: $AZURE_CONTAINER_APP_NAME"
+echo "-------------------------"
 
 # Set the secrets using GitHub CLI for deployment.
 gh secret set AZURE_CREDENTIALS -b"$final_output"
@@ -78,6 +109,7 @@ gh secret set AZURE_CONTAINER_REGISTRY_NAME_PASSWORD -b"$acr_password"
 gh secret set AZURE_CONTAINER_APP_NAME -b"$AZURE_CONTAINER_APP_NAME"
 gh secret set AZURE_RESOURCE_GROUP_NAME -b"$AZURE_RESOURCE_GROUP_NAME"
 gh secret set AZURE_CONTAINER_REGISTRY_NAME -b"$AZURE_CONTAINER_REGISTRY_NAME"
-gh secret set IMAGE_NAME -b"rust-server"
+# Set IMAGE_NAME to the same value as AZURE_CONTAINER_APP_NAME.
+gh secret set IMAGE_NAME -b"$AZURE_CONTAINER_APP_NAME"
 
 echo "Secrets have been set successfully."
