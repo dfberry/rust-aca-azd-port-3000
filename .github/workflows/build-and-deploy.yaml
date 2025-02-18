@@ -1,39 +1,53 @@
 name: build-and-deploy
 
 on:
-  workflow_dispatch:   
+  workflow_dispatch:
   push:
-   branches: 
-     [ main ]  
+    branches: 
+      [ main ]
 
 permissions:
   id-token: write
   contents: read
+
+env:
+  AZURE_CONTAINER_APP_NAME: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
+  AZURE_RESOURCE_GROUP_NAME: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+  AZURE_CONTAINER_REGISTRY_LOGIN_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}
+  AZURE_CONTAINER_REGISTRY_USERNAME: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
+  AZURE_CONTAINER_REGISTRY_PASSWORD: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-
-      # - name: Check for empty environment variables
-      #   run: |
-      #     if [ -z "${{ secrets.AZURE_CONTAINER_APP_NAME }}" ] || [ -z "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" ] || [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY }}" ] || [ -z "${{ secrets.IMAGE_NAME }}" ]; then
-      #       echo "One or more required environment variables are empty. Exiting."
-      #       exit 1
-      #     fi
-
       - name: Verify required secrets are set
         run: |
           missing=0
-          if [ -z "${{ secrets.AZURE_CONTAINER_APP_NAME }}" ]; then echo "Error: Missing AZURE_CONTAINER_APP_NAME" && missing=1; fi
-          if [ -z "${{ secrets.AZURE_RESOURCE_GROUP_NAME }}" ]; then echo "Error: Missing AZURE_RESOURCE_GROUP_NAME" && missing=1; fi
-          if [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}" ]; then echo "Error: Missing AZURE_CONTAINER_REGISTRY_LOGIN_SERVER" && missing=1; fi
-          if [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}" ]; then echo "Error: Missing AZURE_CONTAINER_REGISTRY_USERNAME" && missing=1; fi
-          if [ -z "${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}" ]; then echo "Error: Missing AZURE_CONTAINER_REGISTRY_PASSWORD" && missing=1; fi
-          if [ -z "${{ secrets.IMAGE_NAME }}" ]; then echo "Error: Missing IMAGE_NAME" && missing=1; fi
+
+          # Function to check if a variable is empty or equals its own name.
+          check_var() {
+            var_value="$1"
+            var_name="$2"
+            if [ -z "$var_value" ] || [ "$var_value" = "$var_name" ]; then
+              echo "Error: Missing or invalid value for $var_name"
+              missing=1
+            else
+              echo "$var_name is set with length: ${#var_value}"
+            fi
+          }
+
+          check_var "$AZURE_CONTAINER_APP_NAME" "AZURE_CONTAINER_APP_NAME"
+          check_var "$AZURE_RESOURCE_GROUP_NAME" "AZURE_RESOURCE_GROUP_NAME"
+          check_var "$AZURE_CONTAINER_REGISTRY_LOGIN_SERVER" "AZURE_CONTAINER_REGISTRY_LOGIN_SERVER"
+          check_var "$AZURE_CONTAINER_REGISTRY_USERNAME" "AZURE_CONTAINER_REGISTRY_USERNAME"
+          check_var "$AZURE_CONTAINER_REGISTRY_PASSWORD" "AZURE_CONTAINER_REGISTRY_PASSWORD"
+          check_var "$IMAGE_NAME" "IMAGE_NAME"
+
           if [ $missing -ne 0 ]; then
-            echo "One or more required secrets are missing. Exiting."
+            echo "One or more required secrets are missing or invalid. Exiting."
             exit 1
           fi
 
@@ -43,20 +57,19 @@ jobs:
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v2
         with:
-          login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
+          login-server: $AZURE_CONTAINER_REGISTRY_LOGIN_SERVER
+          username: $AZURE_CONTAINER_REGISTRY_USERNAME
+          password: $AZURE_CONTAINER_REGISTRY_PASSWORD
 
       - name: Verify Docker login
         run: docker info
 
-      # Push build cache to registry along with image (different tags)
       - name: Build and push container image to Azure Container Registry
         uses: docker/build-push-action@v2
         with:
           push: true
           tags: |
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+            $AZURE_CONTAINER_REGISTRY_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }}
           file: ./Dockerfile
 
   deploy:
@@ -74,5 +87,5 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp registry set -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --server ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
-            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+            az containerapp registry set -n $AZURE_CONTAINER_APP_NAME -g $AZURE_RESOURCE_GROUP_NAME --server $AZURE_CONTAINER_REGISTRY_LOGIN_SERVER --username $AZURE_CONTAINER_REGISTRY_USERNAME --password $AZURE_CONTAINER_REGISTRY_PASSWORD
+            az containerapp update -n $AZURE_CONTAINER_APP_NAME -g $AZURE_RESOURCE_GROUP_NAME --image $AZURE_CONTAINER_REGISTRY_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }}
