@@ -38,15 +38,15 @@ jobs:
           username: ${{secrets.AZURE_CONTAINER_REGISTRY_NAME_USERNAME}}
           password: ${{secrets.AZURE_CONTAINER_REGISTRY_NAME_PASSWORD}}
 
-      - name: Verify Docker login
-        run: |
-          docker info
-          # Look for your registry host (for example, regcrwlgqvzfiltj5u.azurecr.io)
-          docker info | grep -i "${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}"
+      # - name: Verify Docker login
+      #   run: |
+      #     docker info
+      #     # Look for your registry host (for example, regcrwlgqvzfiltj5u.azurecr.io)
+      #     docker info | grep -i "${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}"
 
       # Push build cache to registry along with image (different tags)
       - name: Build and push container image to Azure Container Registry
-        uses: docker/build-push-action@48aba3b46d1b1fec4febb7c5d0c644b249a11355
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
