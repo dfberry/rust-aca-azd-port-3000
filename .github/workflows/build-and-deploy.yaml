@@ -1,6 +1,10 @@
 name: build-and-deploy
 
 env:
+  rustserver-cae-wlgqvzfiltj5u: rustserver-aca-azd-port-3000
+  AZURE_RESOURCE_GROUP_NAME: rg-dfb-2-wlgqvzfiltj5u
+  AZURE_CONTAINER_REGISTRY: regcrwlgqvzfiltj5u
+  IMAGE_NAME: server
   AZURE_REGISTRY_LOGIN_SERVER: ${{secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER}}
   AZURE_REGISTRY_USERNAME: ${{secrets.AZURE_CONTAINER_REGISTRY_NAME_USERNAME}}
   AZURE_REGISTRY_PASSWORD: ${{secrets.AZURE_CONTAINER_REGISTRY_NAME_PASSWORD}}
