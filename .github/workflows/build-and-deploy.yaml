@@ -61,3 +61,13 @@ jobs:
             az config set extension.use_dynamic_install=yes_without_prompt
             az containerapp registry set -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --server ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME_USERNAME }} --password ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME_PASSWORD }}
             az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Display Container App FQDN
+        run: |
+          fqdn=$(az containerapp show -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --query properties.configuration.ingress.fqdn --output tsv)
+          if [ -z "$fqdn" ]; then
+            echo "Error: Could not retrieve the FQDN of the container app."
+            exit 1
+          fi
+          echo "Container App is available at: https://$fqdn"
+          echo "## Container App URL: [https://$fqdn](https://$fqdn)"
