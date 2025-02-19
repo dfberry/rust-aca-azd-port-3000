@@ -4,7 +4,7 @@ env:
   rustserver-cae-wlgqvzfiltj5u: rustserver-aca-azd-port-3000
   AZURE_RESOURCE_GROUP_NAME: rg-dfb-2-wlgqvzfiltj5u
   AZURE_CONTAINER_REGISTRY: regcrwlgqvzfiltj5u
-  IMAGE: server
+  IMAGE_NAME: server
   AZURE_REGISTRY_LOGIN_SERVER: ${{secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER}}
   AZURE_REGISTRY_USERNAME: ${{secrets.AZURE_CONTAINER_REGISTRY_NAME_USERNAME}}
   AZURE_REGISTRY_PASSWORD: ${{secrets.AZURE_CONTAINER_REGISTRY_NAME_PASSWORD}}
@@ -43,15 +43,16 @@ jobs:
 
       - name: Verify Docker login
         run: |
-          docker info | grep -i "${{ env.AZURE_REGISTRY_SERVER_ENDPOINT }}"
+          docker info | grep -i "${{ secrets.AZURE_CONTAINER_REGISTRY_NAME_PASSWORD }}"
 
       # Push build cache to registry along with image (different tags)
       - name: Build and push container image to Azure Container Registry
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@48aba3b46d1b1fec4febb7c5d0c644b249a11355
         with:
-          context: .
           push: true
-          tags: server/app:latest
+          tags: |
+            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
