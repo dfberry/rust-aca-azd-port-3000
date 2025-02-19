@@ -91,25 +91,27 @@ fi
 # Do NOT leave this in production environments.
 echo "-------------------------"
 echo "Printing secrets for debugging:"
-echo "AZURE_CREDENTIALS: $final_output"
+
 echo "ACR Login URL: $acr_login"
 echo "ACR Username: $acr_username"
 echo "ACR Password: $acr_password"
+
+echo "AZURE_CONTAINER_REGISTRY_LOGIN_SERVER: $acr_login"
+echo "AZURE_CONTAINER_REGISTRY_NAME_USERNAME: $acr_username"
+echo "AZURE_CONTAINER_REGISTRY_NAME_PASSWORD: $acr_password"
 echo "AZURE_CONTAINER_APP_NAME: $AZURE_CONTAINER_APP_NAME"
+echo "AZURE_CREDENTIALS: $final_output"
 echo "AZURE_RESOURCE_GROUP_NAME: $AZURE_RESOURCE_GROUP_NAME"
-echo "AZURE_CONTAINER_REGISTRY_NAME: $AZURE_CONTAINER_REGISTRY_NAME"
 echo "IMAGE_NAME: $AZURE_CONTAINER_APP_NAME"
 echo "-------------------------"
 
 # Set the secrets using GitHub CLI for deployment.
-gh secret set AZURE_CREDENTIALS -b"$final_output"
-gh secret set AZURE_CONTAINER_REGISTRY_NAME_LOGIN_SERVER -b"$acr_login"
+gh secret set AZURE_CONTAINER_REGISTRY_LOGIN_SERVER -b"$acr_login"
 gh secret set AZURE_CONTAINER_REGISTRY_NAME_USERNAME -b"$acr_username"
 gh secret set AZURE_CONTAINER_REGISTRY_NAME_PASSWORD -b"$acr_password"
 gh secret set AZURE_CONTAINER_APP_NAME -b"$AZURE_CONTAINER_APP_NAME"
+gh secret set AZURE_CREDENTIALS -b"$final_output"
 gh secret set AZURE_RESOURCE_GROUP_NAME -b"$AZURE_RESOURCE_GROUP_NAME"
-gh secret set AZURE_CONTAINER_REGISTRY_NAME -b"$AZURE_CONTAINER_REGISTRY_NAME"
-# Set IMAGE_NAME to the same value as AZURE_CONTAINER_APP_NAME.
 gh secret set IMAGE_NAME -b"$AZURE_CONTAINER_APP_NAME"
 
 echo "Secrets have been set successfully."
