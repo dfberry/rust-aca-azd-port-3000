@@ -24,7 +24,7 @@ Follow the steps in the next section. If you can't complete all the steps succes
 1. In terminal at root of project, run `bash ./scripts/azd-provision-with-environment.sh`. This creates the Azure resources and copies a few key environment variables from the privisioning process into the root `.env`. 
 1. In terminal at root of project, run `bash ./scripts/create-github-azure-credentials.sh`. This creates the secrets you need to deploy from the GitHub workflow file, `./.azure/workflows/build-and-deploy.yaml`, and adds them to your GitHub repo. 
 1. Go to the GitHub repository and trigger the workflow manually to deploy to Azure Container Apps.
-1. When deployment workflow succeeds, the last output in the log is the URL for the app. Use that URL to view the app in a browser. 
+1. In terminal at root of project, run `bash ./scripts/get-url.sh`. This displays the URL to access your app. 
 
 
 ## Using VS Code REST Client

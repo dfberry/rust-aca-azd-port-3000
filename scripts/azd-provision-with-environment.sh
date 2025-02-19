@@ -1,4 +1,9 @@
 #!/bin/bash
+
+## Prerequisites
+## az login --use-device-code
+##
+
 set -euo pipefail
 trap 'echo "Error occurred in ${BASH_SOURCE[0]} at line ${LINENO}"' ERR
 
@@ -25,10 +30,10 @@ else
     echo ".env file not found. Exiting."
     exit 1
 fi
-
+echo "-------------------------"
 echo "Running azd provision with environment variables loaded from .env"
 azd provision
-
+echo "-------------------------"
 # Path to the .azure config file
 CONFIG_FILE=".azure/config.json"
 
@@ -59,6 +64,7 @@ echo "Subfolder .env variable count: $append_count"
 echo "" >> .env
 
 # Append the values from the subfolder .env to the root .env.
+echo "-------------------------\n"
 echo "Appending values from $SUBFOLDER_ENV to .env"
 cat "$SUBFOLDER_ENV" >> .env
 
@@ -73,3 +79,4 @@ if [ "$new_count" -ne "$expected_count" ]; then
 fi
 
 echo "Finished appending. Root .env updated with values from $SUBFOLDER_ENV"
+

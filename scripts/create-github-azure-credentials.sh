@@ -1,5 +1,4 @@
 #!/bin/bash
-# filepath: /workspaces/rust-aca-azd-port-3000/scripts/create-github-azure-credentials.sh
 
 ## Prerequisites
 ## az login --use-device-code
@@ -115,3 +114,5 @@ gh secret set AZURE_RESOURCE_GROUP_NAME -b"$AZURE_RESOURCE_GROUP_NAME"
 gh secret set IMAGE_NAME -b"$AZURE_CONTAINER_APP_NAME"
 
 echo "Secrets have been set successfully."
+
+
