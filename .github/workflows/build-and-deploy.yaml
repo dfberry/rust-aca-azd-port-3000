@@ -4,7 +4,7 @@ env:
   rustserver-cae-wlgqvzfiltj5u: rustserver-aca-azd-port-3000
   AZURE_RESOURCE_GROUP_NAME: rg-dfb-2-wlgqvzfiltj5u
   AZURE_CONTAINER_REGISTRY: regcrwlgqvzfiltj5u
-  IMAGE: rust-server
+  IMAGE: server
 
 on:
   # Automatically trigger it when detected changes in repo. Remove comments to enable
@@ -44,7 +44,7 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/server:latest
           file: ./Dockerfile
 
   deploy:
