@@ -44,7 +44,7 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/server:latest
+            regcrwlgqvzfiltj5u.azurecr.io/server:latest
           file: ./Dockerfile
 
   deploy:
